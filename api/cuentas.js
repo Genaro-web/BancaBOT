@@ -6,7 +6,7 @@ export default function handler(request, response) {
   const origin = request.headers.origin;
 
   // 2. Revisa si el origen empieza con "chrome-extension://"
-  if (origin && origin.startsWith('chrome-extension://')) {
+  if (origin && origin.startsWith('chrome-extension://*')) {
     // 3. Si SÍ es una extensión, le da permiso solo a ELLA
     response.setHeader('Access-Control-Allow-Origin', origin);
   } else {
