@@ -2,35 +2,22 @@
 
 export default function handler(request, response) {
   
-  // 1. Lee el "Origen" de quien hace la petición
-  const origin = request.headers.origin;
+  // ⚠️ ADVERTENCIA: Esto permite que CUALQUIER SITIO WEB lea tus cuentas.
+  // Pero solucionará tu error 403.
+  response.setHeader('Access-Control-Allow-Origin', '*');
+  response.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');
+  response.setHeader('Access-Control-Allow-Headers', 'Content-Type');
 
-  // 2. Revisa si el origen empieza con "chrome-extension://"
-  if (origin && origin.startsWith('chrome-extension://*')) {
-    // 3. Si SÍ es una extensión, le da permiso solo a ELLA
-    response.setHeader('Access-Control-Allow-Origin', origin);
-  } else {
-    // 4. Si NO es una extensión (o no hay origen), bloquea la petición
-    // (Opcional: podrías permitir tu propio sitio web aquí si quisieras)
-    response.status(403).json({ error: 'Acceso no permitido' });
-    return;
-  }
-
-  // 5. Define el resto de cabeceras CORS necesarias
-  response.setHeader('Access-Control-Allow-Credentials', 'true');
-  response.setHeader('Access-Control-Allow-Methods', 'GET,OPTIONS');
-  response.setHeader('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
-
-  // 6. Si es un 'OPTIONS' request (un "pre-vuelo" del navegador), solo envía OK.
+  // Si el navegador envía una petición 'OPTIONS' (pre-vuelo), solo responde OK
   if (request.method === 'OPTIONS') {
     response.status(200).end();
     return;
   }
 
-  // 7. Si es un 'GET' y pasó la validación, envía los datos
+  // Si es un 'GET', envía los datos
   const cuentasPermitidas = {
-    cuentasOrigen: ["34495", "00000"],
-    cuentasDestino: ["33414", "00000"]
+    cuentasOrigen: ["34495", "00000"], // (Asegúrate de que estas sean tus cuentas reales)
+    cuentasDestino: ["33414", "00000"] // (Asegúrate de que estas sean tus cuentas reales)
   };
   
   response.status(200).json(cuentasPermitidas);
