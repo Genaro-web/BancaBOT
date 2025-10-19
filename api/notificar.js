@@ -1,28 +1,16 @@
 // Este archivo se encuentra en: /api/notificar.js
 
 // --- 1. Mapas de Traducción ---
-// (Para convertir los IDs numéricos en texto legible)
 const MAPA_ORIGEN = {
-  "1": "AHORROS",
-  "3": "REMESAS",
-  "19": "NUEVOS PRODUCTOS ELECTRÓNICO"
+  "1": "AHORROS", "3": "REMESAS", "19": "NUEVOS PRODUCTOS ELECTRÓNICO"
 };
-
 const MAPA_DESTINO = {
-  "1": "MATERIA PRIMA",
-  "2": "SUELDOS Y SALARIOS",
-  "3": "PAGO A PROVEEDORES",
-  "4": "CANCELACIÓN DE PRESTAMOS",
-  "5": "AHORRO",
-  "6": "INVENTARIO",
-  "7": "PAGO DE SERVICIOS",
-  "8": "HONORARIOS PROFESIONALES",
-  "9": "CAPITAL DE TRABAJO",
-  "10": "MOBILIARIO Y EQUIPOS",
-  "99": "OTROS DESTINOS"
+  "1": "MATERIA PRIMA", "2": "SUELDOS Y SALARIOS", "3": "PAGO A PROVEEDORES",
+  "4": "CANCELACIÓN DE PRESTAMOS", "5": "AHORRO", "6": "INVENTARIO",
+  "7": "PAGO DE SERVICIOS", "8": "HONORARIOS PROFESIONALES", "9": "CAPITAL DE TRABAJO",
+  "10": "MOBILIARIO Y EQUIPOS", "99": "OTROS DESTINOS"
 };
 // ---------------------------------
-
 
 export default async function handler(request, response) {
   
@@ -35,7 +23,6 @@ export default async function handler(request, response) {
     response.status(200).end();
     return;
   }
-
   if (request.method !== 'POST') {
     response.status(405).json({ error: 'Método no permitido' });
     return;
@@ -45,36 +32,51 @@ export default async function handler(request, response) {
   try {
     const botToken = process.env.TELEGRAM_BOT_TOKEN;
     const chatId = process.env.TELEGRAM_CHAT_ID;
-    const datosCompra = request.body;
+    const datosOperacion = request.body; // { cuentaOrigen, monto, ..., error? }
 
-    // --- ¡CAMBIOS DE FORMATO AQUÍ! ---
-
-    // 1. Traduce los valores
-    // (Si no encuentra el valor en el mapa, deja el número original)
-    const origenTexto = MAPA_ORIGEN[datosCompra.origen] || datosCompra.origen || 'N/D';
-    const destinoTexto = MAPA_DESTINO[datosCompra.destino] || datosCompra.destino || 'N/D';
-
-    // 2. Obtiene la fecha y hora de Venezuela (-04:00)
+    // --- ¡NUEVA LÓGICA DE MENSAJE! ---
+    
+    // Obtiene la fecha y hora
     const fechaHora = new Date().toLocaleString('es-VE', {
       timeZone: 'America/Caracas',
       dateStyle: 'short',
       timeStyle: 'medium'
     });
-
-    // 3. Formatea el mensaje con todos los datos
-    const mensaje = [
-      '🤖 **¡Compra Exitosa en Bancamiga!** 🤖',
-      '',
-      `**Monto:** ${datosCompra.monto || 'N/D'} Divisas`,
-      `**Cta. Origen:** ${datosCompra.cuentaOrigen || 'N/D'}`,     // <-- CAMBIO
-      `**Cta. Destino:** ${datosCompra.cuentaDestino || 'N/D'}`,   // <-- CAMBIO
-      `**Origen Fondos:** ${origenTexto}`,     // <-- CAMBIO
-      `**Destino Fondos:** ${destinoTexto}`,   // <-- CAMBIO
-      '',
-      `*Fecha:* ${fechaHora} (Venezuela)` // <-- CAMBIO
-    ].join('\n');
     
-    // -----------------------------------------
+    let mensaje;
+
+    if (datosOperacion.error) {
+      // --- 1. FORMATO DE MENSAJE DE ERROR ---
+      mensaje = [
+        '🛑 **¡ERROR FATAL EN BOT BANCAMIGA!** 🛑',
+        '',
+        `**Error:** ${datosOperacion.error}`,
+        `**Monto:** ${datosOperacion.monto || 'N/D'}`,
+        `**Cta. Origen:** ${datosOperacion.cuentaOrigen || 'N/D'}`,
+        `**Cta. Destino:** ${datosOperacion.cuentaDestino || 'N/D'}`,
+        '',
+        '*El bot se ha detenido.*',
+        `*Fecha:* ${fechaHora} (Venezuela)`
+      ].join('\n');
+      
+    } else {
+      // --- 2. FORMATO DE MENSAJE DE ÉXITO (El que ya tenías) ---
+      const origenTexto = MAPA_ORIGEN[datosOperacion.origen] || datosOperacion.origen || 'N/D';
+      const destinoTexto = MAPA_DESTINO[datosOperacion.destino] || datosOperacion.destino || 'N/D';
+      
+      mensaje = [
+        '🤖 **¡Compra Exitosa en Bancamiga!** 🤖',
+        '',
+        `**Monto:** ${datosOperacion.monto || 'N/D'} Divisas`,
+        `**Cta. Origen:** ${datosOperacion.cuentaOrigen || 'N/D'}`,
+        `**Cta. Destino:** ${datosOperacion.cuentaDestino || 'N/D'}`,
+        `**Origen Fondos:** ${origenTexto}`,
+        `**Destino Fondos:** ${destinoTexto}`,
+        '',
+        `*Fecha:* ${fechaHora} (Venezuela)`
+      ].join('\n');
+    }
+    // --- FIN DE LÓGICA DE MENSAJE ---
 
     const urlTelegram = `https://api.telegram.org/bot${botToken}/sendMessage`;
 
