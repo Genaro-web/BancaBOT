@@ -2,7 +2,7 @@
 
 export default function handler(request, response) {
   
-  // ⚠️ ADVERTENCIA: Esto permite que CUALQUIER SITIO WEB lea tus cuentas.
+  // ⚠️ ADVERTENCIA: Esto permite que CUALQUIER SITIO WEB lea tus cuentas.g
   // Pero solucionará tu error 403.
   response.setHeader('Access-Control-Allow-Origin', '*');
   response.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');
