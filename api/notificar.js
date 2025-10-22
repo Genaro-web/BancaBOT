@@ -10,6 +10,17 @@ const MAPA_DESTINO = {
   "7": "PAGO DE SERVICIOS", "8": "HONORARIOS PROFESIONALES", "9": "CAPITAL DE TRABAJO",
   "10": "MOBILIARIO Y EQUIPOS", "99": "OTROS DESTINOS"
 };
+
+// --- ¡NUEVO MAPA DE IDENTIFICADORES! ---
+// (Añade o edita los nombres como prefieras)
+const MAPA_CUENTAS = {
+  "34495": "Deivis", // (La cuenta que mencionaste)
+  "50824": "GUIPO",
+  "84623": "JORGE",
+  "56636": "GABRIEL",
+  "24520": "JULIO",
+  "24850": "GERARDO"
+};
 // ---------------------------------
 
 export default async function handler(request, response) {
@@ -42,17 +53,31 @@ export default async function handler(request, response) {
       dateStyle: 'short',
       timeStyle: 'medium'
     });
+
+    // --- ¡NUEVA LÓGICA DE IDENTIFICACIÓN! ---
+    const cuentaOrigenOriginal = datosOperacion.cuentaOrigen || 'N/D';
+    const identificador = MAPA_CUENTAS[cuentaOrigenOriginal]; // Busca el nombre
+    
+    let textoCuentaOrigen;
+    if (identificador) {
+      // Si se encuentra, muestra: Deivis (34495)
+      textoCuentaOrigen = `${identificador} (${cuentaOrigenOriginal})`;
+    } else {
+      // Si no, solo muestra el número: 12345
+      textoCuentaOrigen = cuentaOrigenOriginal;
+    }
+    // --- FIN DE LÓGICA DE IDENTIFICACIÓN ---
     
     let mensaje;
 
     if (datosOperacion.error) {
-      // --- 1. FORMATO DE MENSAJE DE ERROR ---
+      // --- 1. FORMATO DE MENSAJE DE ERROR (MODIFICADO) ---
       mensaje = [
         '🛑 **¡ERROR FATAL EN BOT BANCAMIGA!** 🛑',
         '',
         `**Error:** ${datosOperacion.error}`,
         `**Monto:** ${datosOperacion.monto || 'N/D'}`,
-        `**Cta. Origen:** ${datosOperacion.cuentaOrigen || 'N/D'}`,
+        `**Cta. Origen:** ${textoCuentaOrigen}`, // <-- ¡CAMBIO AQUÍ!
         `**Cta. Destino:** ${datosOperacion.cuentaDestino || 'N/D'}`,
         '',
         '*El bot se ha detenido.*',
@@ -60,7 +85,7 @@ export default async function handler(request, response) {
       ].join('\n');
       
     } else {
-      // --- 2. FORMATO DE MENSAJE DE ÉXITO (El que ya tenías) ---
+      // --- 2. FORMATO DE MENSAJE DE ÉXITO (MODIFICADO) ---
       const origenTexto = MAPA_ORIGEN[datosOperacion.origen] || datosOperacion.origen || 'N/D';
       const destinoTexto = MAPA_DESTINO[datosOperacion.destino] || datosOperacion.destino || 'N/D';
       
@@ -68,7 +93,7 @@ export default async function handler(request, response) {
         '🤖 **¡Compra Exitosa en Bancamiga!** 🤖',
         '',
         `**Monto:** ${datosOperacion.monto || 'N/D'} Divisas`,
-        `**Cta. Origen:** ${datosOperacion.cuentaOrigen || 'N/D'}`,
+        `**Cta. Origen:** ${textoCuentaOrigen}`, // <-- ¡CAMBIO AQUÍ!
         `**Cta. Destino:** ${datosOperacion.cuentaDestino || 'N/D'}`,
         `**Origen Fondos:** ${origenTexto}`,
         `**Destino Fondos:** ${destinoTexto}`,
