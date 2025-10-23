@@ -20,9 +20,10 @@ const MAPA_CUENTAS = {
   "24520": "JULIO",
   "24850": "GERARDO",
   "30035": "DEIVIS_PEREA" // tg
-  "65777": "YEINNY" // tg
-  "37758": "MARIANNY" // tg
-  "37589": "Norelis64" // tg
+  "65777": "YEINNY" // tg jean
+  "37758": "MARIANNY" // tg jean
+  "37589": "Norelis64" // tg katiuska
+  "98059": "ANYER" // tg katiuska
 };
 // ---------------------------------
 
