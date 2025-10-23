@@ -15,9 +15,9 @@ export default async function handler(request, response) {
     try {
       // --- ¡LÓGICA CLAVE! ---
       // Establece el estado "open" con una expiración (ex) de 10 segundos.
-      await kv.set('market_status', 'open', { ex: 10 });
+      await kv.set('market_status', 'open', { ex: 60 });
       
-      console.log("Señal de mercado abierto recibida y establecida por 10s.");
+      console.log("Señal de mercado abierto recibida y establecida por 60s.");
       return response.status(200).json({ status: 'signaled' });
       
     } catch (error) {
