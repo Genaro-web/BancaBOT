@@ -23,7 +23,7 @@ const MAPA_CUENTAS = {
   "65777": "YEINNY" // tg jean
   "37758": "MARIANNY" // tg jean
   "37589": "Norelis64" // tg katiuska
-  "98059": "ANYER" // tg katiuska
+  "98059": "ANYER" // tg anyer
 };
 // ---------------------------------
 
