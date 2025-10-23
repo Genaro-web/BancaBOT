@@ -19,7 +19,9 @@ const MAPA_CUENTAS = {
   "84623": "JORGE",
   "56636": "GABRIEL",
   "24520": "JULIO",
-  "24850": "GERARDO"
+  "24850": "GERARDO",
+  // Agrega aquí más cuentas si lo necesitas
+  "33414": "Destino Deivis" 
 };
 // ---------------------------------
 
@@ -43,9 +45,9 @@ export default async function handler(request, response) {
   try {
     const botToken = process.env.TELEGRAM_BOT_TOKEN;
     const chatId = process.env.TELEGRAM_CHAT_ID;
-    const datosOperacion = request.body; // { cuentaOrigen, monto, ..., error? }
+    const datosOperacion = request.body; // { cuentaOrigen, monto, ..., error? o warning? }
 
-    // --- ¡NUEVA LÓGICA DE MENSAJE! ---
+    // --- LÓGICA DE MENSAJE ---
     
     // Obtiene la fecha y hora
     const fechaHora = new Date().toLocaleString('es-VE', {
@@ -54,38 +56,65 @@ export default async function handler(request, response) {
       timeStyle: 'medium'
     });
 
-    // --- ¡NUEVA LÓGICA DE IDENTIFICACIÓN! ---
+    // --- LÓGICA DE IDENTIFICACIÓN (para Cuenta Origen) ---
     const cuentaOrigenOriginal = datosOperacion.cuentaOrigen || 'N/D';
-    const identificador = MAPA_CUENTAS[cuentaOrigenOriginal]; // Busca el nombre
+    const identificadorOrigen = MAPA_CUENTAS[cuentaOrigenOriginal]; // Busca el nombre
     
     let textoCuentaOrigen;
-    if (identificador) {
+    if (identificadorOrigen) {
       // Si se encuentra, muestra: Deivis (34495)
-      textoCuentaOrigen = `${identificador} (${cuentaOrigenOriginal})`;
+      textoCuentaOrigen = `${identificadorOrigen} (${cuentaOrigenOriginal})`;
     } else {
       // Si no, solo muestra el número: 12345
       textoCuentaOrigen = cuentaOrigenOriginal;
+    }
+    
+    // --- LÓGICA DE IDENTIFICACIÓN (para Cuenta Destino - ¡BONUS!) ---
+    // (Esto es opcional, pero útil ya que también tienes la 33414 mapeada)
+    const cuentaDestinoOriginal = datosOperacion.cuentaDestino || 'N/D';
+    const identificadorDestino = MAPA_CUENTAS[cuentaDestinoOriginal]; // Busca el nombre
+    
+    let textoCuentaDestino;
+    if (identificadorDestino) {
+      textoCuentaDestino = `${identificadorDestino} (${cuentaDestinoOriginal})`;
+    } else {
+      textoCuentaDestino = cuentaDestinoOriginal;
     }
     // --- FIN DE LÓGICA DE IDENTIFICACIÓN ---
     
     let mensaje;
 
     if (datosOperacion.error) {
-      // --- 1. FORMATO DE MENSAJE DE ERROR (MODIFICADO) ---
+      // --- 1. FORMATO DE MENSAJE DE ERROR FATAL ---
       mensaje = [
         '🛑 **¡ERROR FATAL EN BOT BANCAMIGA!** 🛑',
         '',
         `**Error:** ${datosOperacion.error}`,
         `**Monto:** ${datosOperacion.monto || 'N/D'}`,
-        `**Cta. Origen:** ${textoCuentaOrigen}`, // <-- ¡CAMBIO AQUÍ!
-        `**Cta. Destino:** ${datosOperacion.cuentaDestino || 'N/D'}`,
+        `**Cta. Origen:** ${textoCuentaOrigen}`, // <-- Usa el nombre
+        `**Cta. Destino:** ${textoCuentaDestino}`, // <-- Usa el nombre
         '',
         '*El bot se ha detenido.*',
         `*Fecha:* ${fechaHora} (Venezuela)`
       ].join('\n');
       
+    } else if (datosOperacion.warning) {
+      // --- 2. FORMATO DE MENSAJE DE ADVERTENCIA (REINTENTO) ---
+      // (Esta es la lógica que faltaba)
+      mensaje = [
+        '⚠️ **ALERTA EN BOT BANCAMIGA** ⚠️',
+        '',
+        `**Aviso:** ${datosOperacion.warning}`,
+        `**Monto:** ${datosOperacion.monto || 'N/D'}`,
+        `**Cta. Origen:** ${textoCuentaOrigen}`, // <-- Usa el nombre
+        '',
+        '*El bot reintentará el ciclo.*',
+        `*Fecha:* ${fechaHora} (Venezuela)`
+      ].join('\n');
+      
     } else {
-      // --- 2. FORMATO DE MENSAJE DE ÉXITO (MODIFICADO) ---
+      // --- 3. FORMATO DE MENSAJE DE ÉXITO ---
+      // (Completando el código que pegaste)
       const origenTexto = MAPA_ORIGEN[datosOperacion.origen] || datosOperacion.origen || 'N/D';
       const destinoTexto = MAPA_DESTINO[datosOperacion.destino] || datosOperacion.destino || 'N/D';
       
@@ -93,8 +122,8 @@ export default async function handler(request, response) {
         '🤖 **¡Compra Exitosa en Bancamiga!** 🤖',
         '',
         `**Monto:** ${datosOperacion.monto || 'N/D'} Divisas`,
-        `**Cta. Origen:** ${textoCuentaOrigen}`, // <-- ¡CAMBIO AQUÍ!
-        `**Cta. Destino:** ${datosOperacion.cuentaDestino || 'N/D'}`,
+        `**Cta. Origen:** ${textoCuentaOrigen}`, // <-- Usa el nombre
+        `**Cta. Destino:** ${textoCuentaDestino}`, // <-- Usa el nombre
         `**Origen Fondos:** ${origenTexto}`,
         `**Destino Fondos:** ${destinoTexto}`,
         '',
