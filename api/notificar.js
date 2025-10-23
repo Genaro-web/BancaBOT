@@ -11,17 +11,15 @@ const MAPA_DESTINO = {
   "10": "MOBILIARIO Y EQUIPOS", "99": "OTROS DESTINOS"
 };
 
-// --- ¡NUEVO MAPA DE IDENTIFICADORES! ---
-// (Añade o edita los nombres como prefieras)
+// --- MAPA DE IDENTIFICADORES DE CUENTAS ---
 const MAPA_CUENTAS = {
-  "34495": "Deivis", // (La cuenta que mencionaste)
+  "34495": "Deivis",
   "50824": "GUIPO",
   "84623": "JORGE",
   "56636": "GABRIEL",
   "24520": "JULIO",
   "24850": "GERARDO",
-  // Agrega aquí más cuentas si lo necesitas
-  "33414": "Destino Deivis" 
+  "33414": "Destino Deivis"
 };
 // ---------------------------------
 
@@ -43,44 +41,52 @@ export default async function handler(request, response) {
 
   // --- Enviar la notificación a Telegram ---
   try {
-    const botToken = process.env.TELEGRAM_BOT_TOKEN;
-    const chatId = process.env.TELEGRAM_CHAT_ID;
-    const datosOperacion = request.body; // { cuentaOrigen, monto, ..., error? o warning? }
+    const datosOperacion = request.body;
+    const cuentaOrigen = datosOperacion.cuentaOrigen;
 
-    // --- LÓGICA DE MENSAJE ---
+    // --- ¡¡INICIO DE NUEVA LÓGICA DE SELECCIÓN DE BOT!! ---
     
-    // Obtiene la fecha y hora
+    // 1. Intenta buscar las credenciales específicas para esta cuenta
+    const specificBotTokenKey = `BOT_TOKEN_${cuentaOrigen}`;
+    const specificChatIdKey = `CHAT_ID_${cuentaOrigen}`;
+
+    let botToken = process.env[specificBotTokenKey];
+    let chatId = process.env[specificChatIdKey];
+
+    // 2. Si no se encontraron, usa las credenciales "Admin" por defecto
+    if (!botToken || !chatId) {
+      console.log(`No se encontró bot específico para ${cuentaOrigen}. Usando bot admin por defecto.`);
+      botToken = process.env.TELEGRAM_BOT_TOKEN;
+      chatId = process.env.TELEGRAM_CHAT_ID;
+    } else {
+      console.log(`Usando bot específico para ${cuentaOrigen}.`);
+    }
+
+    // 3. Si AÚN ASÍ no hay credenciales, detiene la ejecución.
+    if (!botToken || !chatId) {
+      console.error("Error fatal: No se encontraron variables de entorno de Telegram (ni específicas ni por defecto).");
+      return response.status(500).json({ error: 'Configuración de notificación incompleta en el servidor.' });
+    }
+    // --- ¡¡FIN DE NUEVA LÓGICA DE SELECCIÓN DE BOT!! ---
+
+
+    // --- LÓGICA DE MENSAJE (Sin cambios) ---
+    
     const fechaHora = new Date().toLocaleString('es-VE', {
       timeZone: 'America/Caracas',
       dateStyle: 'short',
       timeStyle: 'medium'
     });
 
-    // --- LÓGICA DE IDENTIFICACIÓN (para Cuenta Origen) ---
+    // Identificación de Cuenta Origen
     const cuentaOrigenOriginal = datosOperacion.cuentaOrigen || 'N/D';
-    const identificadorOrigen = MAPA_CUENTAS[cuentaOrigenOriginal]; // Busca el nombre
+    const identificadorOrigen = MAPA_CUENTAS[cuentaOrigenOriginal];
+    let textoCuentaOrigen = identificadorOrigen ? `${identificadorOrigen} (${cuentaOrigenOriginal})` : cuentaOrigenOriginal;
     
-    let textoCuentaOrigen;
-    if (identificadorOrigen) {
-      // Si se encuentra, muestra: Deivis (34495)
-      textoCuentaOrigen = `${identificadorOrigen} (${cuentaOrigenOriginal})`;
-    } else {
-      // Si no, solo muestra el número: 12345
-      textoCuentaOrigen = cuentaOrigenOriginal;
-    }
-    
-    // --- LÓGICA DE IDENTIFICACIÓN (para Cuenta Destino - ¡BONUS!) ---
-    // (Esto es opcional, pero útil ya que también tienes la 33414 mapeada)
+    // Identificación de Cuenta Destino
     const cuentaDestinoOriginal = datosOperacion.cuentaDestino || 'N/D';
-    const identificadorDestino = MAPA_CUENTAS[cuentaDestinoOriginal]; // Busca el nombre
-    
-    let textoCuentaDestino;
-    if (identificadorDestino) {
-      textoCuentaDestino = `${identificadorDestino} (${cuentaDestinoOriginal})`;
-    } else {
-      textoCuentaDestino = cuentaDestinoOriginal;
-    }
-    // --- FIN DE LÓGICA DE IDENTIFICACIÓN ---
+    const identificadorDestino = MAPA_CUENTAS[cuentaDestinoOriginal];
+    let textoCuentaDestino = identificadorDestino ? `${identificadorDestino} (${cuentaDestinoOriginal})` : cuentaDestinoOriginal;
     
     let mensaje;
 
@@ -91,8 +97,8 @@ export default async function handler(request, response) {
         '',
         `**Error:** ${datosOperacion.error}`,
         `**Monto:** ${datosOperacion.monto || 'N/D'}`,
-        `**Cta. Origen:** ${textoCuentaOrigen}`, // <-- Usa el nombre
-        `**Cta. Destino:** ${textoCuentaDestino}`, // <-- Usa el nombre
+        `**Cta. Origen:** ${textoCuentaOrigen}`,
+        `**Cta. Destino:** ${textoCuentaDestino}`,
         '',
         '*El bot se ha detenido.*',
         `*Fecha:* ${fechaHora} (Venezuela)`
@@ -100,13 +106,12 @@ export default async function handler(request, response) {
       
     } else if (datosOperacion.warning) {
       // --- 2. FORMATO DE MENSAJE DE ADVERTENCIA (REINTENTO) ---
-      // (Esta es la lógica que faltaba)
       mensaje = [
         '⚠️ **ALERTA EN BOT BANCAMIGA** ⚠️',
         '',
         `**Aviso:** ${datosOperacion.warning}`,
         `**Monto:** ${datosOperacion.monto || 'N/D'}`,
-        `**Cta. Origen:** ${textoCuentaOrigen}`, // <-- Usa el nombre
+        `**Cta. Origen:** ${textoCuentaOrigen}`,
         '',
         '*El bot reintentará el ciclo.*',
         `*Fecha:* ${fechaHora} (Venezuela)`
@@ -114,7 +119,6 @@ export default async function handler(request, response) {
       
     } else {
       // --- 3. FORMATO DE MENSAJE DE ÉXITO ---
-      // (Completando el código que pegaste)
       const origenTexto = MAPA_ORIGEN[datosOperacion.origen] || datosOperacion.origen || 'N/D';
       const destinoTexto = MAPA_DESTINO[datosOperacion.destino] || datosOperacion.destino || 'N/D';
       
@@ -122,8 +126,8 @@ export default async function handler(request, response) {
         '🤖 **¡Compra Exitosa en Bancamiga!** 🤖',
         '',
         `**Monto:** ${datosOperacion.monto || 'N/D'} Divisas`,
-        `**Cta. Origen:** ${textoCuentaOrigen}`, // <-- Usa el nombre
-        `**Cta. Destino:** ${textoCuentaDestino}`, // <-- Usa el nombre
+        `**Cta. Origen:** ${textoCuentaOrigen}`,
+        `**Cta. Destino:** ${textoCuentaDestino}`,
         `**Origen Fondos:** ${origenTexto}`,
         `**Destino Fondos:** ${destinoTexto}`,
         '',
@@ -132,13 +136,14 @@ export default async function handler(request, response) {
     }
     // --- FIN DE LÓGICA DE MENSAJE ---
 
+    // La URL ahora usa las variables 'botToken' y 'chatId' que seleccionamos
     const urlTelegram = `https://api.telegram.org/bot${botToken}/sendMessage`;
 
     await fetch(urlTelegram, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        chat_id: chatId,
+        chat_id: chatId, // Usa el Chat ID seleccionado
         text: mensaje,
         parse_mode: 'Markdown'
       })
