@@ -19,7 +19,7 @@ const MAPA_CUENTAS = {
   "56636": "GABRIEL",
   "24520": "JULIO",
   "24850": "GERARDO",
-  "33414": "Destino Deivis"
+  "30035": "DEIVIS_PEREA"
 };
 // ---------------------------------
 
