@@ -28,6 +28,8 @@ const MAPA_CUENTAS = {
   "64783": "LEANDRY", // tg GUIPO
   "20510": "YINELY", // tg GUIPO
   "76360": "FABIOLA", // tg GUIPO
+  "37568": "ARIADNA", // tg @aribarboza20
+  "32213": "DAIBELIS" // tg @manolo521
 };
 // ---------------------------------
 
