@@ -25,11 +25,13 @@ const MAPA_CUENTAS = {
   "37589": "Norelis64", // tg katiuska
   "98059": "ANYER", 
   "77327": "DENIREX", 
-  "64783": "LEANDRY", // tg GUIPO
-  "20510": "YINELY", // tg GUIPO
+  "64783": "LEANDRY", // tg GUIPO listo
+  "20510": "YINELY", // tg GUIPO listo
   "76360": "FABIOLA", // tg GUIPO
   "37568": "ARIADNA", // tg @aribarboza20
-  "32213": "DAIBELIS" // tg @manolo521
+  "32213": "DAIBELIS", // tg @manolo521
+  "39205": "MARIA", // tg Gerardo
+  "39213": "ATILIO" // tg gerardo
 };
 // ---------------------------------
 
