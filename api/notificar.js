@@ -19,19 +19,20 @@ const MAPA_CUENTAS = {
   "56636": "GABRIEL",
   "24520": "JULIO",
   "24850": "GERARDO",
-  "30035": "DEIVIS_PEREA", // tg
+  "30035": "DEIVIS_PEREA", // bot deivisp
   "65777": "YEINNY", // tg jean
   "37758": "MARIANNY", // tg jean
   "37589": "Norelis64", // tg katiuska
   "98059": "ANYER", 
   "77327": "DENIREX", 
-  "64783": "LEANDRY", // tg GUIPO listo
-  "20510": "YINELY", // tg GUIPO listo
+  "64783": "LEANDRY", // bot guipo
+  "20510": "YINELY", // bot guipo
   "76360": "FABIOLA", // tg GUIPO
-  "37568": "ARIADNA", // tg @aribarboza20
+  "37568": "ARIADNA", // bot Deivisp
   "32213": "DAIBELIS", // tg @manolo521
   "39205": "MARIA", // tg Gerardo
   "39213": "ATILIO" // tg gerardo
+  "69454": "JOSE" // bot deivip
 };
 // ---------------------------------
 
