@@ -18,7 +18,7 @@ const MAPA_CUENTAS = {
   "84623": "JORGE",
   "56636": "GABRIEL",
   "24520": "JULIO",
-  "24850": "GERARDO",
+  // "24850": "GERARDO",
   "30035": "DEIVIS_PEREA", // bot deivisp
   "65777": "YEINNY", // tg jean
   "37758": "MARIANNY", // tg jean
