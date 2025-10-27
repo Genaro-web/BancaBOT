@@ -102,8 +102,20 @@ export default async function handler(request, response) {
     let textoCuentaDestino = identificadorDestino ? `${identificadorDestino} (${cuentaDestinoOriginal})` : cuentaDestinoOriginal;
     
     let mensaje;
+    // --- <<< INICIO CÓDIGO NUEVO >>> ---
+    if (datosOperacion.signalType === 'swarm') {
+      // --- NUEVO: FORMATO DE MENSAJE PARA SEÑAL DE ENJAMBRE ---
+      mensaje = [
+        '🐝 **¡Señal de Enjambre Recibida!** 🐝',
+        '',
+        `**Bot:** ${textoCuentaOrigen}`, // Identifica qué bot la recibió
+        `**Monto Configurado:** ${datosOperacion.monto || 'N/D'}`, // Contexto útil
+        '',
+        '*Saltando espera y continuando operación...*',
+        `*Fecha:* ${fechaHora} (Venezuela)`
+      ].join('\n');
 
-    if (datosOperacion.error) {
+    } else if (datosOperacion.error) {
       // --- 1. FORMATO DE MENSAJE DE ERROR FATAL ---
       mensaje = [
         '🛑 **¡ERROR FATAL EN BOT BANCAMIGA!** 🛑',
