@@ -16,8 +16,8 @@ export default function handler(request, response) {
 
   // Si es un 'GET', envía los datos
   const cuentasPermitidas = {
-    cuentasOrigen: ["34495", "50824", "84623", "56636", "24520", "30035", "65777", "37758", "39395", "98059", "77327", "20510", "37568", "32213", "69454"], // (Asegúrate de que estas sean tus cuentas reales)
-    cuentasDestino: ["33414", "45667", "82452", "57964", "32051", "33161", "64119", "40356", "37589", "98893", "76410", "28257", "40166", "35331", "65346"] // (Asegúrate de que estas sean tus cuentas reales)
+    cuentasOrigen: ["34495"], // (Asegúrate de que estas sean tus cuentas reales)
+    cuentasDestino: ["33414"] // (Asegúrate de que estas sean tus cuentas reales)
   };
   
   response.status(200).json(cuentasPermitidas);
