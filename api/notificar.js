@@ -14,6 +14,7 @@ const MAPA_DESTINO = {
 // --- MAPA DE IDENTIFICADORES DE CUENTAS ---
 const MAPA_CUENTAS = {
   "34495": "Deivis",
+  "42942": "MARIANA",
   "50824": "GUIPO",
   "84623": "JORGE",
   "56636": "GABRIEL",
