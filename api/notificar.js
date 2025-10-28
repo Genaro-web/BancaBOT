@@ -29,10 +29,11 @@ const MAPA_CUENTAS = {
   "20510": "YINELY", // bot guipo
   "76360": "FABIOLA", // bot GUIPO
   "37568": "ARIADNA", // bot Deivisp
-  "32213": "DAIBELIS", // bot Deivisp
+  "32213": "DAIBELIS", // bot anyer
   "39205": "MARIA", // bot Gerardo
   "39213": "ATILIO", // bot gerardo
-  "69454": "JOSE" // bot deivip
+  "69454": "JOSE", // bot deivip
+  "36706": "KATHE" // tg
 };
 // ---------------------------------
 
