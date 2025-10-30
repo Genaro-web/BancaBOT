@@ -35,10 +35,10 @@ const MAPA_CUENTAS = {
   "39213": "ATILIO", // bot gerardo
   "69454": "JOSE", // bot deivip
   "51661": "ANGELO", // bot anyer
-  "60421": "EDGAR", // tg gerardo
-  "63850": "PIBI", // tg gerardo
-  "59092": "MARIETTA", // tg gerardo
-  "56420": "SCARLY", // tg gerardo
+  "60421": "EDGAR", // bot gerardo
+  "63850": "PIBI", // bot gerardo
+  "59092": "MARIETTA", // bot gerardo
+  "56420": "SCARLY", // bot gerardo
   "36706": "KATHE" // tg
 };
 // ---------------------------------
