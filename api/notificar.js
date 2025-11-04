@@ -40,6 +40,7 @@ const MAPA_CUENTAS = {
   "59092": "MARIETTA", // bot gerardo
   "56420": "SCARLY", // bot gerardo
   "50929": "GERARD", // bot gerardo
+  "22839": "JORGEGONZALEZ", // bot gerardo
   "36706": "KATHE" // tg
 };
 // ---------------------------------
